@@ -24,14 +24,14 @@ pub struct ListArgs {
 
 #[derive(Parser)]
 #[command(author, version, about)]
-pub struct LaunchArgs {
+pub struct RunArgs {
     space: String,
 }
 
 #[derive(Subcommand)]
 pub enum Commands {
     Init(InitArgs),
-    Launch(LaunchArgs),
+    Run(RunArgs),
     Add(AddArgs),
     List(ListArgs),
 }
@@ -126,7 +126,7 @@ pub fn run(cmd: Commands) -> Result<(), Box<dyn std::error::Error>> {
 
             println!("Added.");
         }
-        Commands::Launch(args) => {
+        Commands::Run(args) => {
             println!("Launching '{}'...", args.space);
             let c = get_config();
 
