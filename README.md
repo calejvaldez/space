@@ -13,5 +13,5 @@ space.
 ## Installing
 
 ```shell
-cargo install --path .
+cargo install --git ssh://git@github.com/calejvaldez/space.git
 ```
