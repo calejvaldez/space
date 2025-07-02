@@ -1,4 +1,4 @@
-use crate::logic::{App, Space, get_config, save_config};
+use crate::logic::{App, Space, get_config, get_config_path, save_config};
 use clap::{Parser, Subcommand};
 use rfd::FileDialog;
 use std::{env::consts::OS, path::PathBuf, process::Command};
@@ -28,12 +28,19 @@ pub struct RunArgs {
     space: String,
 }
 
+#[derive(Parser)]
+#[command(author, version, about)]
+pub struct ConfigArgs {
+    space: Option<String>,
+}
+
 #[derive(Subcommand)]
 pub enum Commands {
     Init(InitArgs),
     Run(RunArgs),
     Add(AddArgs),
     List(ListArgs),
+    Config(ConfigArgs),
 }
 
 fn pick_file() -> Option<PathBuf> {
@@ -174,6 +181,54 @@ pub fn run(cmd: Commands) -> Result<(), Box<dyn std::error::Error>> {
                 for space in &c.spaces {
                     print_apps(space);
                 }
+            }
+        }
+        Commands::Config(args) => {
+            let config = get_config();
+            let config_path = get_config_path();
+
+            if args.space.is_some() {
+                let query = args.space.unwrap();
+
+                if query == "open" {
+                    Command::new(match OS {
+                        "windows" => "start",
+                        "macos" => "open",
+                        "linux" => "xdg-open",
+                        _ => {
+                            eprintln!("This operating system is not supported.");
+                            std::process::exit(1);
+                        }
+                    })
+                    .arg(&config_path)
+                    .spawn()
+                    .unwrap_or_else(|error| {
+                        eprint!("An error occurred: {:?}", error);
+                        std::process::exit(1);
+                    });
+
+                    std::process::exit(0);
+                }
+
+                let space = config
+                    .spaces
+                    .iter()
+                    .find(|s| s.name == query)
+                    .unwrap_or_else(|| {
+                        eprintln!("Could not find a space named '{}'.", query);
+                        std::process::exit(1);
+                    });
+
+                println!(
+                    "{}",
+                    toml::to_string_pretty(space)
+                        .expect(format!("Failed to deserialize '{}'.", query).as_str())
+                );
+            } else {
+                println!(
+                    "{}",
+                    toml::to_string_pretty(&config).expect("Failed to deserialize configuration.")
+                );
             }
         }
     }

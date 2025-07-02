@@ -18,7 +18,7 @@ pub struct App {
     pub exec: String,
 }
 
-fn get_config_path() -> PathBuf {
+pub fn get_config_path() -> PathBuf {
     let config_dir = dirs::config_dir().expect("A config folder could not be found.");
     config_dir.join("com.calejvaldez.space").join("config.toml")
 }
