@@ -1,0 +1,11 @@
+[package]
+name = "space"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+clap = { version = "4.5.40", features = ["derive"] }
+dirs = "6.0.0"
+serde = { version = "1.0", features = ["derive"] }
+toml = "0.8.23"
+rfd = "0.15"
