@@ -65,7 +65,7 @@ fn run_app(exec: &String) {
 }
 
 fn print_apps(space: &Space) {
-    if space.commands.len() > 0 {
+    if !space.commands.is_empty() {
         println!("Space: {}", space.name);
         for command in &space.commands {
             println!("- {} (`{}`)", command.label, command.exec);
@@ -139,7 +139,7 @@ pub fn run(cmd: Commands) -> Result<(), Box<dyn std::error::Error>> {
                     std::process::exit(1);
                 });
 
-            if space.commands.len() == 0 {
+            if space.commands.is_empty() {
                 eprintln!("No apps were added to '{}'.", space.name);
                 std::process::exit(1);
             }
