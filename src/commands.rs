@@ -66,12 +66,13 @@ fn run_app(exec: &String) {
 
 fn print_apps(space: &Space) {
     if !space.commands.is_empty() {
-        println!("Space: {}", space.name);
+        print!("{}: ", space.name);
         for command in &space.commands {
-            println!("- {} (`{}`)", command.label, command.exec);
+            print!("'{}' ", command.label);
         }
+        println!("");
     } else {
-        println!("Space: {} (No apps added)", space.name)
+        println!("{} (No apps added)", space.name)
     }
 }
 
