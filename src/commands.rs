@@ -72,69 +72,12 @@ fn print_apps(space: &Space) {
     if !space.apps.is_empty() {
         print!("{}: ", space.name);
         for app in &space.apps {
-            #[cfg(target_os = "windows")]
-            if app.exec_windows.is_some() {
-                print!("'{}' ", app.label);
-            }
-
-            #[cfg(target_os = "macos")]
-            if app.exec_macos.is_some() {
-                print!("'{}' ", app.label);
-            }
-
-            #[cfg(target_os = "linux")]
-            if app.exec_linux.is_some() {
-                print!("'{}' ", app.label);
-            }
+            print!("'{}' ", app.label);
         }
         println!("");
     } else {
         println!("{} (No apps added)", space.name)
     }
-}
-
-fn create_new_app(label: String, exec: String) -> App {
-    let mut new_app = App {
-        label,
-        exec_windows: None,
-        exec_macos: None,
-        exec_linux: None,
-    };
-
-    match OS {
-        "windows" => {
-            new_app.exec_windows = Some(exec);
-        }
-        "macos" => {
-            new_app.exec_macos = Some(exec);
-        }
-        "linux" => {
-            new_app.exec_linux = Some(exec);
-        }
-        _ => {
-            eprintln!("This operating system is not supported.");
-            std::process::exit(1);
-        }
-    }
-
-    new_app
-}
-
-fn open_app(app: &App) {
-    let exec = if cfg!(target_os = "windows") {
-        app.exec_windows.as_ref()
-    } else if cfg!(target_os = "macos") {
-        app.exec_macos.as_ref()
-    } else if cfg!(target_os = "linux") {
-        app.exec_macos.as_ref()
-    } else {
-        eprintln!("Unsupported operating system.");
-        std::process::exit(1);
-    }
-    .unwrap();
-
-    open::that(exec).expect(format!("Failed to open '{}'.", app.label).as_str());
-    print!("'{}' ", app.label);
 }
 
 pub fn run(cmd: Commands) -> Result<(), Box<dyn std::error::Error>> {
@@ -185,7 +128,10 @@ pub fn run(cmd: Commands) -> Result<(), Box<dyn std::error::Error>> {
                 }
             };
 
-            space.apps.push(create_new_app(args.label, exec_path));
+            space.apps.push(App {
+                label: args.label,
+                exec: exec_path,
+            });
 
             save_config(c);
 
@@ -212,7 +158,13 @@ pub fn run(cmd: Commands) -> Result<(), Box<dyn std::error::Error>> {
             print!("Apps: ");
 
             for app in &space.apps {
-                open_app(app);
+                match open::that(&app.exec) {
+                    Ok(_) => print!("'{}' ", app.label),
+                    Err(error) => {
+                        eprint!("An error occurred: {:?}", error);
+                        std::process::exit(1);
+                    }
+                }
             }
             print!("\n");
 

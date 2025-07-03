@@ -15,12 +15,7 @@ pub struct Space {
 #[derive(Serialize, Deserialize)]
 pub struct App {
     pub label: String,
-    #[serde(default)]
-    pub exec_windows: Option<String>,
-    #[serde(default)]
-    pub exec_macos: Option<String>,
-    #[serde(default)]
-    pub exec_linux: Option<String>,
+    pub exec: String,
 }
 
 pub fn get_config_path() -> PathBuf {
