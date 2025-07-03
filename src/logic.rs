@@ -9,7 +9,7 @@ pub struct Config {
 #[derive(Serialize, Deserialize)]
 pub struct Space {
     pub name: String,
-    pub commands: Vec<App>,
+    pub apps: Vec<App>,
 }
 
 #[derive(Serialize, Deserialize)]

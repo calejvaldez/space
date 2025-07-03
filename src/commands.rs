@@ -54,10 +54,10 @@ fn pick_file() -> Option<PathBuf> {
 }
 
 fn print_apps(space: &Space) {
-    if !space.commands.is_empty() {
+    if !space.apps.is_empty() {
         print!("{}: ", space.name);
-        for command in &space.commands {
-            print!("'{}' ", command.label);
+        for app in &space.apps {
+            print!("'{}' ", app.label);
         }
         println!("");
     } else {
@@ -82,7 +82,7 @@ pub fn run(cmd: Commands) -> Result<(), Box<dyn std::error::Error>> {
 
             c.spaces.push(Space {
                 name: args.space,
-                commands: vec![],
+                apps: vec![],
             });
             save_config(c);
 
@@ -101,7 +101,7 @@ pub fn run(cmd: Commands) -> Result<(), Box<dyn std::error::Error>> {
                     std::process::exit(1);
                 });
 
-            space.commands.push(App {
+            space.apps.push(App {
                 label: args.label,
                 exec: match pick_file() {
                     Some(path) => path.display().to_string(),
@@ -129,16 +129,16 @@ pub fn run(cmd: Commands) -> Result<(), Box<dyn std::error::Error>> {
                     std::process::exit(1);
                 });
 
-            if space.commands.is_empty() {
+            if space.apps.is_empty() {
                 eprintln!("No apps were added to '{}'.", space.name);
                 std::process::exit(1);
             }
 
             print!("Apps: ");
 
-            for command in &space.commands {
-                match open::that(&command.exec) {
-                    Ok(_) => print!("{} ", command.label),
+            for app in &space.apps {
+                match open::that(&app.exec) {
+                    Ok(_) => print!("{} ", app.label),
                     Err(error) => {
                         eprint!("An error occurred: {:?}", error);
                         std::process::exit(1);
