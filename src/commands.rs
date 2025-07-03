@@ -6,41 +6,54 @@ use std::{env::consts::OS, path::PathBuf};
 #[derive(Parser)]
 #[command(author, version, about)]
 pub struct InitArgs {
+    /// Name for the new space
     space: String,
 }
 
 #[derive(Parser)]
 #[command(author, version, about)]
 pub struct AddArgs {
+    /// Space to add this app to
     space: String,
+    /// Label to recognize app
     label: String,
+    /// Path to app; if provided, skips the file picker dialog
     path: Option<String>,
 }
 
 #[derive(Parser)]
 #[command(author, version, about)]
 pub struct ListArgs {
+    /// If provided, lists apps in this space only
     space: Option<String>,
 }
 
 #[derive(Parser)]
 #[command(author, version, about)]
 pub struct OpenArgs {
+    /// The name of the space whose apps you want to launch
     space: String,
 }
 
 #[derive(Parser)]
 #[command(author, version, about)]
 pub struct ConfigArgs {
+    /// If provided, print config for this space only; `open` for file
     space: Option<String>,
 }
 
+/// Launch multiple apps from the CLI
 #[derive(Subcommand)]
 pub enum Commands {
+    /// Create a new space
     Init(InitArgs),
+    /// Launch all apps in a space
     Open(OpenArgs),
+    /// Add a new app to a space
     Add(AddArgs),
+    /// List spaces and apps
     List(ListArgs),
+    /// Show or open the config file
     Config(ConfigArgs),
 }
 
