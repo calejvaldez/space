@@ -29,7 +29,10 @@ pub fn get_config() -> Config {
         .join("com.calejvaldez.space");
     let config_path = config_dir.join("config.toml");
 
-    if !fs::exists(&config_path).unwrap() {
+    if !fs::exists(&config_path).unwrap()
+        || (fs::exists(&config_path).unwrap()
+            && fs::read_to_string(&config_path).unwrap().is_empty())
+    {
         let default_config = Config { spaces: vec![] };
 
         fs::create_dir_all(config_dir).unwrap_or_else(|error| {
