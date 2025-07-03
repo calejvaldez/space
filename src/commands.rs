@@ -14,6 +14,7 @@ pub struct InitArgs {
 pub struct AddArgs {
     space: String,
     label: String,
+    path: Option<String>,
 }
 
 #[derive(Parser)]
@@ -159,11 +160,15 @@ pub fn run(cmd: Commands) -> Result<(), Box<dyn std::error::Error>> {
                     std::process::exit(1);
                 });
 
-            let exec_path = match pick_file() {
-                Some(path) => path.display().to_string(),
-                None => {
-                    eprintln!("No executable selected.");
-                    std::process::exit(1);
+            let exec_path = if args.path.is_some() {
+                args.path.unwrap()
+            } else {
+                match pick_file() {
+                    Some(path) => path.display().to_string(),
+                    None => {
+                        eprintln!("No executable selected.");
+                        std::process::exit(1);
+                    }
                 }
             };
 
