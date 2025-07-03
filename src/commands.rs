@@ -1,7 +1,7 @@
 use crate::logic::{App, Space, get_config, get_config_path, save_config};
 use clap::{Parser, Subcommand};
 use rfd::FileDialog;
-use std::{env::consts::OS, path::PathBuf, process::Command};
+use std::{env::consts::OS, path::PathBuf};
 
 #[derive(Parser)]
 #[command(author, version, about)]
@@ -51,24 +51,6 @@ fn pick_file() -> Option<PathBuf> {
             _ => dirs::home_dir().unwrap(),
         })
         .pick_file()
-}
-
-fn run_app(exec: &String) {
-    Command::new(match OS {
-        "windows" => "start",
-        "macos" => "open",
-        "linux" => "xdg-open",
-        _ => {
-            eprintln!("This operating system is not supported.");
-            std::process::exit(1);
-        }
-    })
-    .args([&exec])
-    .spawn()
-    .unwrap_or_else(|error| {
-        eprint!("An error occurred: {:?}", error);
-        std::process::exit(1);
-    });
 }
 
 fn print_apps(space: &Space) {
@@ -155,8 +137,13 @@ pub fn run(cmd: Commands) -> Result<(), Box<dyn std::error::Error>> {
             print!("Apps: ");
 
             for command in &space.commands {
-                print!("{} ", command.label);
-                run_app(&command.exec);
+                match open::that(&command.exec) {
+                    Ok(_) => print!("{} ", command.label),
+                    Err(error) => {
+                        eprint!("An error occurred: {:?}", error);
+                        std::process::exit(1);
+                    }
+                }
             }
             print!("\n");
 
@@ -191,18 +178,7 @@ pub fn run(cmd: Commands) -> Result<(), Box<dyn std::error::Error>> {
                 let query = args.space.unwrap();
 
                 if query == "open" {
-                    Command::new(match OS {
-                        "windows" => "start",
-                        "macos" => "open",
-                        "linux" => "xdg-open",
-                        _ => {
-                            eprintln!("This operating system is not supported.");
-                            std::process::exit(1);
-                        }
-                    })
-                    .arg(&config_path)
-                    .spawn()
-                    .unwrap_or_else(|error| {
+                    open::that(config_path).unwrap_or_else(|error| {
                         eprint!("An error occurred: {:?}", error);
                         std::process::exit(1);
                     });
