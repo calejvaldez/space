@@ -46,6 +46,7 @@ pub enum Commands {
 fn pick_file() -> Option<PathBuf> {
     FileDialog::new()
         .set_directory(match OS {
+            "windows" => PathBuf::from("C:\\"),
             "macos" => PathBuf::from("/Applications"),
             "linux" => dirs::executable_dir().unwrap(),
             _ => dirs::home_dir().unwrap(),
