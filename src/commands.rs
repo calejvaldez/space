@@ -51,6 +51,7 @@ pub enum Commands {
     Open(OpenArgs),
     /// Add a new app to a space
     Add(AddArgs),
+    #[command(visible_alias = "ls")]
     /// List spaces and apps
     List(ListArgs),
     /// Show or open the config file
