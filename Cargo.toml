@@ -5,8 +5,7 @@ description="Open multiple apps at the same time with a simple command."
 readme="README.md"
 homepage="https://github.com/calejvaldez/space"
 repository="https://github.com/calejvaldez/space.git"
-license = "GPL-2.0"
-license-file = "LICENSE"
+license = "GPL-3.0"
 include = ["LICENSE"]
 publish = false
 
