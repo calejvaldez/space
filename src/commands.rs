@@ -58,6 +58,25 @@ pub enum Commands {
     Config(ConfigArgs),
 }
 
+pub fn no_subcommand() {
+    let c = get_config();
+
+    if c.spaces.is_empty() {
+        eprintln!("You have no spaces.");
+        eprintln!("\nhint:");
+        eprintln!("> cargo init <name>");
+
+        std::process::exit(1);
+    } else {
+        for space in &c.spaces {
+            print_apps(space);
+        }
+
+        println!("\nhint:");
+        println!("> cargo open <name>");
+    }
+}
+
 fn pick_file() -> Option<PathBuf> {
     FileDialog::new()
         .set_directory(match OS {
