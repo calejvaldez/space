@@ -2,5 +2,11 @@
     "[rust]": {
         "editor.formatOnSave": true,
         "editor.defaultFormatter": "rust-lang.rust-analyzer",
+    },
+    "[markdown]": {
+        "editor.rulers": [80]
+    },
+    "files.associations": {
+        "LICENSE": "plaintext"
     }
 }
